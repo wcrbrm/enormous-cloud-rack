@@ -2,8 +2,8 @@ package cloud.enormous.rack.web;
 
 import akka.http.scaladsl.Http
 import scala.util.Properties
-import scala.concurrent.{ Await, Future }
-import scala.concurrent.duration._
+// import scala.concurrent.{ Await, Future }
+// import scala.concurrent.duration._
 import com.typesafe.scalalogging.StrictLogging
 
 object WebServer extends App with StrictLogging {
@@ -13,6 +13,6 @@ object WebServer extends App with StrictLogging {
     implicit val executionContext = system.dispatcher
 
     val port: Int = Properties.envOrElse("PORT", "8080").toInt
-    val binding: Future[Http.ServerBinding] = Http().bindAndHandle(Routes.merged, "localhost", port)
+    val binding = Http().bindAndHandle(Routes.merged, "localhost", port)
     logger.info(s"Server online at http://localhost:${port}/, press RETURN to stop...")
 }

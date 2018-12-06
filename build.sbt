@@ -30,6 +30,12 @@ lazy val `rack` = project
       "com.typesafe.akka" %% "akka-cluster-tools" % akkaVersion,
       "com.typesafe.akka" %% "akka-multi-node-testkit" % akkaVersion,
 
+      "org.sangria-graphql" %% "sangria" % "1.4.2",
+      "org.sangria-graphql" %% "sangria-relay" % "1.4.2",
+      "org.sangria-graphql" %% "sangria-circe" % "1.2.1",
+      "org.sangria-graphql" %% "sangria-spray-json" % "1.0.1",
+
+
       "org.scalatest" %% "scalatest" % "3.0.5" % Test,
       "io.kamon" % "sigar-loader" % "1.6.6-rev002"
     ),

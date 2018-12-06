@@ -13,6 +13,6 @@ object WebServer extends App with StrictLogging {
     implicit val executionContext = system.dispatcher
 
     val port: Int = Properties.envOrElse("PORT", "8080").toInt
-    val binding = Http().bindAndHandle(Routes.merged, "localhost", port)
+    val binding = Http().bindAndHandle(Routes.getAll, "localhost", port)
     logger.info(s"Server online at http://localhost:${port}/, press RETURN to stop...")
 }

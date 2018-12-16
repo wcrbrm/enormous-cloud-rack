@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration>
+    <Appenders>
+        <Console name="STDOUT">
+            <PatternLayout>
+                <pattern>[%level] [%date{ISO8601}] [%logger] [akkaSource=%X{akkaSource}][sourceThread=%X{sourceThread}] [mdc=ticket-#%X{ticketNumber}: %X{ticketDesc}] %msg%n</pattern>
+            </PatternLayout>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Root level="DEBUG">
+            <AppenderRef ref="STDOUT"/>
+        </Root>
+    </Loggers>
+</Configuration>

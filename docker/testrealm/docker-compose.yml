@@ -1,0 +1,23 @@
+version: '3'
+services:
+  ssh2220:
+    image: sickp/alpine-sshd:7.5-r2
+    restart: "always"
+    ports:
+      - "2220:22"
+  ssh2221:
+    image: sickp/alpine-sshd:7.5-r2
+    restart: "always"
+    ports:
+       - "2221:22"
+  ssh2230:
+    image: sickp/alpine-sshd:7.5-r2
+    restart: "always"
+    ports:
+       - "2230:22"
+  ssh2231:
+    image: sickp/alpine-sshd:7.5-r2
+    restart: "always"
+    ports:
+       - "2231:22"
+

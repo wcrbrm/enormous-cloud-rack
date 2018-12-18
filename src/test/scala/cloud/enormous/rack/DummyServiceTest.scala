@@ -6,8 +6,7 @@ import spray.json._
 
 class DummyServiceTest extends BaseServiceTest {
 
-
-  "API Schema" should {
+  "Dummy API Schema" should {
     "correctly identify dummy 1 as a" in {
       val query =
         graphql"""

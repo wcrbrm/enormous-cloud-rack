@@ -4,7 +4,7 @@ import akka.http.scaladsl.testkit.ScalatestRouteTest
 import cloud.enormous.rack.graphql.GraphqlSchemaDefinition.apiSchema
 import cloud.enormous.rack.graphql.{GraphQLContext, GraphQLContextServices}
 import cloud.enormous.rack.http.HttpService
-import cloud.enormous.rack.services.{AuthService, DummyService}
+import cloud.enormous.rack.services.{AuthService, DummyService, ServerService}
 import cloud.enormous.rack.utils.AutoValidate
 import cloud.enormous.rack.utils.InMemoryPostgresStorage._
 import org.scalatest.{Matchers, WordSpec}
@@ -23,9 +23,12 @@ trait BaseServiceTest extends WordSpec with Matchers with ScalatestRouteTest {
 
   dbProcess.getProcessId
 
-  val dummyService = new DummyService()
   implicit val authService = new AuthService(new AutoValidate)
-  val graphQLContextServices = GraphQLContextServices(authService, dummyService)
+
+  val dummyService = new DummyService()
+  val serverService = new ServerService()
+
+  val graphQLContextServices = GraphQLContextServices(authService, dummyService, serverService)
 
   val httpService = new HttpService(graphQLContextServices)
 

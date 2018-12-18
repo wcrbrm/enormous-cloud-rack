@@ -6,7 +6,7 @@ import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import cloud.enormous.rack.http.HttpService
 import cloud.enormous.rack.graphql.GraphQLContextServices
-import cloud.enormous.rack.services.{AuthService, DummyService}
+import cloud.enormous.rack.services.{AuthService, DummyService, ServerService}
 import cloud.enormous.rack.utils.{AWSCognitoValidation, AutoValidate, Configuration, FlywayService}
 
 import scala.concurrent.ExecutionContext
@@ -25,7 +25,8 @@ object Main extends App with Configuration {
   //implicit val authService = new AuthService(new AWSCognitoValidation(authCognito, log)) Use this Service for AWS ;-)
 
   val dummyService = new DummyService()
-  val graphQLContextServices = GraphQLContextServices(authService, dummyService)
+  val serverService  = new ServerService()
+  val graphQLContextServices = GraphQLContextServices(authService, dummyService, serverService)
   val httpService = new HttpService(graphQLContextServices)
   Http().bindAndHandle(httpService.routes, httpHost, httpPort)
   // $COVERAGE-ON$

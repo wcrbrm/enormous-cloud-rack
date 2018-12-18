@@ -1,8 +1,8 @@
 DROP TABLE IF EXISTS "server";
 CREATE TABLE IF NOT EXISTS "server" (
   "id"      VARCHAR PRIMARY KEY ,
-  "realm_id" VARCHAR NOT NULL DEFAULT "testrealm",
-  "group_id" VARCHAR NOT NULL DEFAULT "",
+  "realm_id" VARCHAR NOT NULL DEFAULT 'testrealm',
+  "group_id" VARCHAR NOT NULL DEFAULT '',
   "name"    VARCHAR NOT NULL,
   "status"  INT NOT NULL DEFAULT 1,
   "ip"      VARCHAR NOT NULL,  -- ip (+optional port)

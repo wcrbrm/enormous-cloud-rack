@@ -7,12 +7,12 @@ import cloud.enormous.rack.utils.Persistence
 import sangria.macros.derive._
 import sangria.schema.{Args, Argument, Field, ListType, OptionInputType, OptionType, StringType, fields}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ServerService()(implicit executionContext: ExecutionContext)  extends Persistence {
   val serverRepository = new ServerRepository()
 
-  def findGraphQL(args : Args) = {
+  def findGraphQL(args : Args): Future[Seq[Server]] = {
     executeOperation {
       serverRepository.find(
         id = args.argOpt("id"),
@@ -28,7 +28,7 @@ object ServerService {
   implicit val graphqlType = deriveObjectType[ServerService, Server]()
 
   val graphqlFields = fields[GraphQLContext, Unit](
-    Field("name", ListType(graphqlType),
+    Field("server", ListType(graphqlType),
       arguments = Argument("id", OptionInputType(StringType), description = "ID of the server")
         :: Argument("groupId", OptionInputType(StringType), description = "Group of servers")
         :: Argument("name", OptionInputType(StringType), description = "Name of the server")

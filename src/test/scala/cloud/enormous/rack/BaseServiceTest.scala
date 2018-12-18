@@ -11,7 +11,7 @@ import org.scalatest.{Matchers, WordSpec}
 import sangria.ast.Document
 import sangria.execution.Executor
 import sangria.marshalling.sprayJson._
-import sangria.renderer.SchemaRenderer
+// import sangria.renderer.SchemaRenderer
 import spray.json._
 
 import scala.concurrent.Await
@@ -19,8 +19,7 @@ import scala.concurrent.duration._
 
 trait BaseServiceTest extends WordSpec with Matchers with ScalatestRouteTest {
 
-  println(SchemaRenderer.renderSchema(apiSchema))
-
+  // println(SchemaRenderer.renderSchema(apiSchema))
   dbProcess.getProcessId
 
   implicit val authService = new AuthService(new AutoValidate)
@@ -36,7 +35,7 @@ trait BaseServiceTest extends WordSpec with Matchers with ScalatestRouteTest {
     val futureResult = Executor.execute(apiSchema, query,
       variables = vars,
       userContext = GraphQLContext(None, graphQLContextServices)
-      )
-    Await.result(futureResult, 10.seconds)
+    )
+    Await.result(futureResult, 5.seconds)
   }
 }

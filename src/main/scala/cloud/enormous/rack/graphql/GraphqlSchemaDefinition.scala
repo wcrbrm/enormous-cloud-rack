@@ -26,10 +26,21 @@ object GraphqlSchemaDefinition {
 
   val Mutation = ObjectType(
     "Mutation", fields[GraphQLContext, Unit](
-      DummyService.graphqlMutationsAddDummy
-      // ServerService.graphqlMutationsAddDummy
+      DummyService.graphqlMutationsAddDummy,
+      // server mutation:
+      ServerService.graphqlMutationCreateServer,
+      ServerService.graphqlMutationUpdateServer,
+      ServerService.graphqlMutationDeleteServer
     )
   )
 
-  val apiSchema = Schema(Query, Some(Mutation))
+  val Types: List[Type with Named] = List(
+  )
+
+  val apiSchema = Schema(
+    query = Query,
+    mutation = Some(Mutation),
+    subscription = None,
+    additionalTypes = Types
+  )
 }

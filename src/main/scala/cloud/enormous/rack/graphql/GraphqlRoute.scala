@@ -14,7 +14,13 @@ import spray.json._
 import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success}
 
-class GraphqlRoute(graphQLServices: GraphQLContextServices)(implicit executionContext: ExecutionContext, override protected val authService: AuthService) extends SecurityDirectives {
+class GraphqlRoute(graphQLServices: GraphQLContextServices)(
+      implicit executionContext: ExecutionContext,
+      override protected val authService: AuthService
+  ) extends SecurityDirectives {
+
+  println(sangria.renderer.SchemaRenderer.renderSchema(GraphqlSchemaDefinition.apiSchema))
+
   // $COVERAGE-OFF$No changes required
   val route: Route =
     (post & path("graphql")) {
@@ -25,36 +31,34 @@ class GraphqlRoute(graphQLServices: GraphQLContextServices)(implicit executionCo
           val JsString(query) = fields("query")
 
           val operation = fields.get("operationName") collect {
-            case JsString(op) ⇒ op
+            case JsString(op) => op
           }
 
           val vars = fields.get("variables") match {
-            case Some(obj: JsObject) ⇒ obj
-            case _ ⇒ JsObject.empty
+            case Some(obj: JsObject) => obj
+            case _ => JsObject.empty
           }
 
           val graphQLContext = GraphQLContext(Some(credentials), graphQLServices)
 
           QueryParser.parse(query) match {
             // query parsed successfully, time to execute it!
-            case Success(queryAst) ⇒
+            case Success(queryAst) =>
               complete(Executor.execute(GraphqlSchemaDefinition.apiSchema, queryAst,
                 variables = vars,
                 operationName = operation,
                 userContext = graphQLContext
               )
-                .map(OK → _)
+                .map(OK -> _)
                 .recover {
                   case error: QueryAnalysisError ⇒ BadRequest → error.resolveError
                   case error: ErrorWithResolver ⇒ InternalServerError → error.resolveError
                 })
 
             // can't parse GraphQL query, return error
-            case Failure(error) ⇒
+            case Failure(error) =>
               complete(BadRequest, JsObject("error" → JsString(error.getMessage)))
           }
-
-
         }
       }
     } ~

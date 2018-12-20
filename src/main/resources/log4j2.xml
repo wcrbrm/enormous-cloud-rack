@@ -10,6 +10,13 @@
     </Appenders>
 
     <Loggers>
+        <Logger name="slick.compiler" level="WARN" />
+        <Logger name="slick.relational" level="WARN" />
+        <Logger name="slick.jdbc.JdbcBackend" level="WARN" />
+
+        <Logger name="com.zaxxer.hikari" level="WARN" />
+        <Logger name="org.flywaydb.core.internal" level="WARN" />
+
         <Root level="DEBUG">
             <AppenderRef ref="STDOUT"/>
         </Root>

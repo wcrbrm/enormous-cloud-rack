@@ -34,7 +34,7 @@ M2:
       - server should connect to ssh  (1 via password, 2 via PEM)
           (client is reponsible to keep it, once we are out of request,
           ssh should be closed on timeout)
-      - if not conencted, the connection should be kept
+      - if not connected, the connection should be kept
       - if connection is lost, it should re-connect
 
    What should be parsed / sent back to event bus then to client (for each serverId)
@@ -46,6 +46,16 @@ M2:
       - free disk space (/)
       - free disk space for every additional volume
       - server state from external command
+
+   USER CASE in TESTS:
+      client subscribed to statusUpdate
+      client sends mutation StatusRequested(ids: ["testserver1", "testserver2"])
+   IN RESPONSE
+      server just says ok,
+      and within 5 seconds we should receive something in the response channel
+      include all types of notification: LA, UPTIME, DF
+
+
 
    General information
       Docker version

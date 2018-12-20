@@ -15,8 +15,8 @@ object Version {
   final val nimbusds = "4.23"
   final val slick = "3.2.0"
   final val flyway = "3.2.1"
-  final val sangriaSprayJson = "1.0.0"
-  final val sangria = "1.2.2"
+  final val sangriaSprayJson = "1.0.1"
+  final val sangria = "1.4.2"
 }
 
 object Library {
@@ -44,6 +44,7 @@ object Library {
 
   val sangriaSprayJson = "org.sangria-graphql" %% "sangria-spray-json" % Version.sangriaSprayJson
   val sangria = "org.sangria-graphql" %% "sangria" % Version.sangria
+  val sangriaRelay = "org.sangria-graphql" %% "sangria-relay" % Version.sangria
 
 
 }

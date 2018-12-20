@@ -20,6 +20,7 @@ libraryDependencies ++= {
     Library.flywaydb,
     Library.nimbusds,
     Library.sangria,
+    Library.sangriaRelay,
     Library.sangriaSprayJson,
     TestLibrary.akkaTestkit,
     TestLibrary.akkaHttpTestkit,

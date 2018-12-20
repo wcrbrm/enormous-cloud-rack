@@ -4,8 +4,10 @@ import com.byteslounge.slickrepo.meta.Keyed
 import com.byteslounge.slickrepo.repository.Repository
 import cloud.enormous.rack.models.Server
 import slick.ast.BaseTypedType
+import slick.dbio.Effect
 import slick.jdbc.JdbcProfile
 import slick.lifted.MappedProjection
+import slick.sql.SqlAction
 
 class ServerRepository()(implicit override val driver: JdbcProfile)
   extends Repository[Server, String](driver) {
@@ -24,6 +26,10 @@ class ServerRepository()(implicit override val driver: JdbcProfile)
     def ip: Rep[String] = column[String]("ip")
 
     def * = (id.?, groupId?, name?, ip) <> ((Server.apply _).tupled, Server.unapply)
+  }
+
+  def findById(id: String): DBIO[Seq[Server]] = {
+    find(id = Some(id))
   }
 
   def find(

@@ -1,66 +1,74 @@
 package cloud.enormous.rack
+import sangria.ast.Document
 import sangria.macros._
+import sangria.parser.QueryParser
 import spray.json._
+import org.scalatest._
 
 class ServerServiceTest extends BaseServiceTest {
 
     def getById(id: String): JsValue = {
-      val query = graphql"""query {
-          server(id: "testserver1") { id groupId name ip }
-      }"""
-      executeQuery(query)
+      val document: Document = QueryParser.parse(
+          s"""query { server(id: "$id") { id groupId name ip } }"""
+      ).get
+      executeQuery(document)
     }
 
     "Server API Schema" should {
 
       "correctly find server by ID" in {
-        getById("testserver1") should be (
-          """
-            {
-              "data": {
-                "server": [{
-                  "id": "testserver1",
-                  "groupId": "production",
-                  "name": "Production Server",
-                  "ip": "127.0.0.1:2200"
-                }]
-              }
-            }
-          """.parseJson
-        )
+        val testserverJson = s"""{"id": "testserver1", "groupId": "production", "name": "Production Server", "ip": "127.0.0.1:2200" }"""
+        getById("testserver1") should be
+          s""" {"data":{"server":$testserverJson}} """.parseJson
       }
-/*
-      "correctly mutate: CREATE, READ, UPDATE, READ, DELETE, READ" in {
 
-        // 1. CREATE
-        val queryCreate = graphql"""mutation {
-          createServer(id: "testCRUD", groupId: "", name: "Test CRUD", ip: "127.0.0.1") {
+      // find server by multiple IDS
+      // find server by search queries
+
+      "not update something absent" in {
+        val queryUpdate = graphql"""mutation {
+          updateServer(id: "testBadId", input: {groupId: "newGroup", name: "Test CRUD2", ip: "127.0.0.1:2299" }) {
             id groupId name ip
           }
         }"""
-        println(executeQuery(queryCreate))
-        println(getById("testCRUD"))
+        executeQuery(queryUpdate) should be (s""" {"data":{"updateServer":null}} """.parseJson)
+      }
 
+      "correctly mutate: CREATE, READ, UPDATE, READ, DELETE, READ" in {
+        // 1. CREATE and vertify
+        val id = "testCRUD"
+        val serverCreatedJson = s"""{"id": "$id", "groupId": "", "name": "Test CRUD", "ip": "127.0.0.1" }"""
 
-        // 2. TODO: READ AFTER CREATION
-        // 3. UPDATE
-//        val queryUpdate = graphql"""mutation {
-//          updateServer(id: "testCRUD", groupId: "Another", name: "Test CRUD 1", ip: "127.0.0.1:2222") {
-//            id groupId name ip
-//          }
-//        }"""
-//        println(executeQuery(queryUpdate))
+        val queryCreate = graphql"""mutation {
+          createServer(input: {id: "testCRUD", groupId: "", name: "Test CRUD", ip: "127.0.0.1" }) {
+            id groupId name ip
+          }
+        }"""
+        executeQuery(queryCreate) should be (s""" {"data":{"createServer":$serverCreatedJson}} """.parseJson)
+        getById(id) should be (s""" {"data":{"server":[$serverCreatedJson]}} """.parseJson)
 
-        // 4. TODO: READ AFTER UPDATE
-        // 5. DELETE
+        // 2. UPDATE and verify
+        println("updating JSON...")
+        val serverUpdatedJson = s"""{"id": "$id", "groupId": "newGroup", "name": "Test CRUD2", "ip": "127.0.0.1:2299" }"""
+        val queryUpdate = graphql"""mutation {
+          updateServer(id: "testCRUD", input: {groupId: "newGroup", name: "Test CRUD2", ip: "127.0.0.1:2299" }) {
+            id groupId name ip
+          }
+        }"""
+        executeQuery(queryUpdate) should be (s""" {"data":{"updateServer":$serverUpdatedJson}} """.parseJson)
+        getById(id) should be (s""" {"data":{"server":[$serverUpdatedJson]}} """.parseJson)
+
+        // 3. DELETE and verify
+//        val serverDeleteJson = s"""{"id": "$id"}"""
 //        val queryDelete = graphql"""mutation {
 //          deleteServer(id: "testCRUD") { id }
 //        }"""
-//        println(executeQuery(queryDelete))
-
-        // 6. TODO: READ AFTER DELETE, MUST BE MISSING
+//        executeQuery(queryDelete) should be
+//          s""" {"data":{"deleteServer":$serverDeleteJson}} """.parseJson
+//        getById(id) should be
+//          s""" {"data":{"server":[]}} """.parseJson
       }
-*/
+
     }
 
   }

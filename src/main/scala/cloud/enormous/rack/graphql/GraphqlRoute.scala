@@ -19,7 +19,7 @@ class GraphqlRoute(graphQLServices: GraphQLContextServices)(
       override protected val authService: AuthService
   ) extends SecurityDirectives {
 
-  println(sangria.renderer.SchemaRenderer.renderSchema(GraphqlSchemaDefinition.apiSchema))
+  // println(sangria.renderer.SchemaRenderer.renderSchema(GraphqlSchemaDefinition.apiSchema))
 
   // $COVERAGE-OFF$No changes required
   val route: Route =

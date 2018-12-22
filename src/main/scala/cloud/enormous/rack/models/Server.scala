@@ -3,12 +3,15 @@ package cloud.enormous.rack.models
 import com.byteslounge.slickrepo.meta.Entity
 import sangria.macros.derive._
 
+case class CreateServerInput(id: String, groupId: String, name: String, ip: String)
+case class UpdateServerInput(groupId: Option[String], name: Option[String], ip: Option[String])
+
 @GraphQLDescription(description = "Servers")
 case class Server(
 
     override val id: Option[String],
-    groupId: Option[String] = None,
-    name: Option[String] = None,
+    groupId: String,
+    name: String,
     ip: String
 
 ) extends Entity[Server, String] {
@@ -16,6 +19,13 @@ case class Server(
   override def withId(id: String): Server = this.copy(
     id = Some(id), groupId=groupId, name=name, ip=ip
   )
+  def updatedWith(input: UpdateServerInput): Server = {
+    Server(id,
+      input.groupId.getOrElse(this.groupId),
+      input.name.getOrElse(this.name),
+      input.ip.getOrElse(this.ip)
+    )
+  }
 
 }
 
@@ -34,5 +44,4 @@ case class Server(
   "auth_user"       VARCHAR NOT NULL DEFAULT 'root',
   "auth_password"   VARCHAR NULL,
   "auth_privateKey" TEXT NULL
-
  */

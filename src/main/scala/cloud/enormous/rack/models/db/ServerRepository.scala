@@ -25,7 +25,7 @@ class ServerRepository()(implicit override val driver: JdbcProfile)
     def name: Rep[String] = column[String]("name")
     def ip: Rep[String] = column[String]("ip")
 
-    def * = (id.?, groupId?, name?, ip) <> ((Server.apply _).tupled, Server.unapply)
+    def * = (id.?, groupId, name, ip) <> ((Server.apply _).tupled, Server.unapply)
   }
 
   def findById(id: String): DBIO[Seq[Server]] = {

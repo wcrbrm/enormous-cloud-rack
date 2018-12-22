@@ -10,10 +10,10 @@ object Version {
   final val swagger = "1.5.14"
   final val swaggerAkka = "0.9.2"
   final val akkaHttpCors = "0.2.1"
-  final val slickRepo = "1.4.3"
+  final val slickRepo = "1.5.2"
   final val postgresql = "9.4-1206-jdbc42"
   final val nimbusds = "4.23"
-  final val slick = "3.2.0"
+  final val slick = "3.2.3"
   final val flyway = "3.2.1"
   final val sangriaSprayJson = "1.0.1"
   final val sangria = "1.4.2"
@@ -35,7 +35,7 @@ object Library {
   val akkaLog4j = "de.heikoseeberger" %% "akka-log4j" % Version.AkkaLog4j
 
   val slick = "com.typesafe.slick" %% "slick" % Version.slick
-  val slickHikaricp = "com.typesafe.slick" %% "slick-hikaricp" % "3.2.0"
+  val slickHikaricp = "com.typesafe.slick" %% "slick-hikaricp" % Version.slick
   val postgresql =  "org.postgresql" % "postgresql"% Version.postgresql
   val slickRepo =  "com.byteslounge" %% "slick-repo" % Version.slickRepo
   val flywaydb = "org.flywaydb" % "flyway-core" % Version.flyway

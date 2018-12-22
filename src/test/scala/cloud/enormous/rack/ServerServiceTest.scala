@@ -48,7 +48,6 @@ class ServerServiceTest extends BaseServiceTest {
         getById(id) should be (s""" {"data":{"server":[$serverCreatedJson]}} """.parseJson)
 
         // 2. UPDATE and verify
-        println("updating JSON...")
         val serverUpdatedJson = s"""{"id": "$id", "groupId": "newGroup", "name": "Test CRUD2", "ip": "127.0.0.1:2299" }"""
         val queryUpdate = graphql"""mutation {
           updateServer(id: "testCRUD", input: {groupId: "newGroup", name: "Test CRUD2", ip: "127.0.0.1:2299" }) {
@@ -59,14 +58,12 @@ class ServerServiceTest extends BaseServiceTest {
         getById(id) should be (s""" {"data":{"server":[$serverUpdatedJson]}} """.parseJson)
 
         // 3. DELETE and verify
-//        val serverDeleteJson = s"""{"id": "$id"}"""
-//        val queryDelete = graphql"""mutation {
-//          deleteServer(id: "testCRUD") { id }
-//        }"""
-//        executeQuery(queryDelete) should be
-//          s""" {"data":{"deleteServer":$serverDeleteJson}} """.parseJson
-//        getById(id) should be
-//          s""" {"data":{"server":[]}} """.parseJson
+        val serverDeleteJson = s"""{"id": "$id"}"""
+        val queryDelete = graphql"""mutation {
+          deleteServer(id: "testCRUD") { id }
+        }"""
+        executeQuery(queryDelete) should be (s""" {"data":{"deleteServer":$serverDeleteJson}} """.parseJson)
+        getById(id) should be (s""" {"data":{"server":[]}} """.parseJson)
       }
 
     }

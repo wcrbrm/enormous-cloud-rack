@@ -1,7 +1,7 @@
 package cloud.enormous.rack.services
 
 import cloud.enormous.rack.graphql.GraphQLContext
-import cloud.enormous.rack.models.{CreateServerInput, ResultObject, Server, UpdateServerInput}
+import cloud.enormous.rack.models._
 import cloud.enormous.rack.models.db.{MaybeFilter, ServerRepository}
 import cloud.enormous.rack.utils.Persistence
 import sangria.macros.derive._
@@ -10,7 +10,7 @@ import sangria.marshalling.sprayJson._
 import sangria.schema.{Args, Argument, Field, InputField, InputObjectType, ListType, ObjectType, OptionInputType, OptionType, StringType, fields}
 
 import scala.concurrent.duration.Duration
-import scala.concurrent.{ Await, ExecutionContext, Future }
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 
 class ServerService()(implicit executionContext: ExecutionContext)  extends Persistence {
@@ -37,13 +37,10 @@ class ServerService()(implicit executionContext: ExecutionContext)  extends Pers
 
   @GraphQLField
   def updateServer(id: String, input: UpdateServerInput): Future[Server] = {
-    println(s"updateServer $id: $input")
     executeAction(serverRepository.findOne(id)) match {
-      case Some(found) => {
+      case Some(found) =>
         val updated = found.updatedWith(input)
-        println(s"updateServer $id: $updated")
         executeOperation(serverRepository.update(updated))
-      }
       // there might be a better version for error handling. with error message passed to GraphQL
       case None => Future { null }
     }
@@ -51,8 +48,12 @@ class ServerService()(implicit executionContext: ExecutionContext)  extends Pers
 
   @GraphQLField
   def deleteServer(id: String): Future[ResultObject] = {
-    println(s"deleteServer ${id}")
-    Future { ResultObject(id) }
+    executeAction(serverRepository.findOne(id)) match {
+      case Some(found) =>
+        executeAction(serverRepository.delete(found))
+        Future { ResultObject(id) }
+      case None => Future { ResultObject(id, "failure") }
+    }
   }
 }
 

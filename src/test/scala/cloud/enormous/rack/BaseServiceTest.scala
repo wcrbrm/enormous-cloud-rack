@@ -20,7 +20,7 @@ import scala.concurrent.duration._
 trait BaseServiceTest extends WordSpec with Matchers with ScalatestRouteTest {
 
   // println(SchemaRenderer.renderSchema(apiSchema))
-  dbProcess.getProcessId
+  // dbProcess.getProcessId
 
   implicit val authService = new AuthService(new AutoValidate)
 

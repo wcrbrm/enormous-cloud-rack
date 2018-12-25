@@ -3,8 +3,8 @@ package cloud.enormous.rack.models
 import com.byteslounge.slickrepo.meta.Entity
 import sangria.macros.derive._
 
-case class CreateServerInput(id: String, groupId: String, name: String, ip: String)
-case class UpdateServerInput(groupId: Option[String], name: Option[String], ip: Option[String])
+case class CreateServerInput(id: String, groupId: String, name: String, ip: String, tags: Option[List[String]] = Some(Nil))
+case class UpdateServerInput(groupId: Option[String], name: Option[String], ip: Option[String], tags: Option[List[String]])
 
 @GraphQLDescription(description = "Servers")
 case class Server(
@@ -12,21 +12,22 @@ case class Server(
     override val id: Option[String],
     groupId: String,
     name: String,
-    ip: String
+    ip: String,
+    tags: Option[List[String]]
 
 ) extends Entity[Server, String] {
 
   override def withId(id: String): Server = this.copy(
-    id = Some(id), groupId=groupId, name=name, ip=ip
+    id = Some(id), groupId = groupId, name = name, ip = ip, tags = tags
   )
   def updatedWith(input: UpdateServerInput): Server = {
     Server(id,
-      input.groupId.getOrElse(this.groupId),
-      input.name.getOrElse(this.name),
-      input.ip.getOrElse(this.ip)
+      input.groupId getOrElse this.groupId,
+      input.name getOrElse this.name,
+      input.ip getOrElse this.ip,
+      input.tags orElse this.tags orElse Some(Nil)
     )
   }
-
 }
 
 /*

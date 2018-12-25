@@ -14,6 +14,8 @@ libraryDependencies ++= {
     Library.slf4jLog4jBridge,
     Library.akkaLog4j,
     Library.slick,
+    Library.slickPg,
+    Library.slickPgSprayJson,
     Library.slickHikaricp,
     Library.postgresql,
     Library.slickRepo,

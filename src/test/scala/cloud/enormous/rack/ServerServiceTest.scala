@@ -3,13 +3,12 @@ import sangria.ast.Document
 import sangria.macros._
 import sangria.parser.QueryParser
 import spray.json._
-import org.scalatest._
 
 class ServerServiceTest extends BaseServiceTest {
 
     def getById(id: String): JsValue = {
       val document: Document = QueryParser.parse(
-          s"""query { server(id: "$id") { id groupId name ip } }"""
+          s"""query { server(id: "$id") { id groupId name ip tags } }"""
       ).get
       executeQuery(document)
     }
@@ -27,8 +26,8 @@ class ServerServiceTest extends BaseServiceTest {
 
       "not update something absent" in {
         val queryUpdate = graphql"""mutation {
-          updateServer(id: "testBadId", input: {groupId: "newGroup", name: "Test CRUD2", ip: "127.0.0.1:2299" }) {
-            id groupId name ip
+          updateServer(id: "testBadId", input: {groupId: "newGroup", name: "Test CRUD2", ip: "127.0.0.1:2299", tags: ["one", "two"] }) {
+            id groupId name ip tags
           }
         }"""
         executeQuery(queryUpdate) should be (s""" {"data":{"updateServer":null}} """.parseJson)
@@ -37,21 +36,25 @@ class ServerServiceTest extends BaseServiceTest {
       "correctly mutate: CREATE, READ, UPDATE, READ, DELETE, READ" in {
         // 1. CREATE and vertify
         val id = "testCRUD"
-        val serverCreatedJson = s"""{"id": "$id", "groupId": "", "name": "Test CRUD", "ip": "127.0.0.1" }"""
+        val serverCreatedJson = s"""{
+             |"id": "$id", "groupId": "", "name": "Test CRUD", "ip": "127.0.0.1",
+             |"tags": ["one", "two"]}""".stripMargin
 
         val queryCreate = graphql"""mutation {
-          createServer(input: {id: "testCRUD", groupId: "", name: "Test CRUD", ip: "127.0.0.1" }) {
-            id groupId name ip
+          createServer(input: {id: "testCRUD", groupId: "", name: "Test CRUD", ip: "127.0.0.1", tags: ["one", "two"] }) {
+            id groupId name ip tags
           }
         }"""
         executeQuery(queryCreate) should be (s""" {"data":{"createServer":$serverCreatedJson}} """.parseJson)
         getById(id) should be (s""" {"data":{"server":[$serverCreatedJson]}} """.parseJson)
 
         // 2. UPDATE and verify
-        val serverUpdatedJson = s"""{"id": "$id", "groupId": "newGroup", "name": "Test CRUD2", "ip": "127.0.0.1:2299" }"""
+        val serverUpdatedJson = s"""{"id": "$id",
+             |"groupId": "newGroup", "name": "Test CRUD2", "ip": "127.0.0.1:2299",
+             |"tags" : ["three", "four"] }""".stripMargin
         val queryUpdate = graphql"""mutation {
-          updateServer(id: "testCRUD", input: {groupId: "newGroup", name: "Test CRUD2", ip: "127.0.0.1:2299" }) {
-            id groupId name ip
+          updateServer(id: "testCRUD", input: {groupId: "newGroup", name: "Test CRUD2", ip: "127.0.0.1:2299", tags: ["three", "four"] }) {
+            id groupId name ip tags
           }
         }"""
         executeQuery(queryUpdate) should be (s""" {"data":{"updateServer":$serverUpdatedJson}} """.parseJson)

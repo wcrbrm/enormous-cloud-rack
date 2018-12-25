@@ -7,11 +7,10 @@ import cloud.enormous.rack.utils.Persistence
 import sangria.macros.derive._
 import spray.json._
 import sangria.marshalling.sprayJson._
-import sangria.schema.{Args, Argument, Field, InputField, InputObjectType, ListType, ObjectType, OptionInputType, OptionType, StringType, fields}
+import sangria.schema.{Args, Argument, Field, InputField, InputObjectType, ListInputType, ListType, ObjectType, OptionInputType, OptionType, StringType, fields}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
-
 
 class ServerService()(implicit executionContext: ExecutionContext)  extends Persistence {
   val serverRepository = new ServerRepository()
@@ -22,14 +21,15 @@ class ServerService()(implicit executionContext: ExecutionContext)  extends Pers
         id = args.argOpt("id"),
         groupId = args.argOpt("groupId"),
         name = args.argOpt("name"),
-        ip = args.argOpt("ip")
+        ip = args.argOpt("ip"),
+        tags = args.argOpt( "tags")
       )
     }
   }
 
   @GraphQLField
   def createServer(input: CreateServerInput): Future[Server] = {
-    val obj = Server(Some(input.id), input.groupId, input.name, input.ip)
+    val obj = Server(Some(input.id), input.groupId, input.name, input.ip, input.tags)
     executeOperation {
       serverRepository.save(obj)
     }
@@ -67,6 +67,7 @@ object ServerService {
         :: Argument("groupId", OptionInputType(StringType), description = "Group of servers")
         :: Argument("name", OptionInputType(StringType), description = "Name of the server")
         :: Argument("ip", OptionInputType(StringType), description = "IP address and port for ssh connection")
+        :: Argument("tags", OptionInputType(ListInputType(StringType)), description = "Tags labeling the server")
         :: Nil,
       resolve = f => f.ctx.services.serverService.findGraphQL(f.args)
     )).head
@@ -75,18 +76,20 @@ object ServerService {
     InputField("id", StringType),
     InputField("groupId", StringType),
     InputField("name", StringType),
-    InputField("ip", StringType)
+    InputField("ip", StringType),
+    InputField("tags", ListInputType(StringType))
   ))
 
   val UpdateServerInputType = InputObjectType[UpdateServerInput]("UpdateServerInput", List(
     InputField("groupId", OptionInputType(StringType)),
     InputField("name", OptionInputType(StringType)),
     InputField("ip", OptionInputType(StringType)),
+    InputField("tags", OptionInputType(ListInputType(StringType)))
   ))
 
   object ServerJsonProtocol extends DefaultJsonProtocol {
-    implicit val formatCreateServerInput = jsonFormat4(CreateServerInput.apply)
-    implicit val formatUpdateServerInput = jsonFormat3(UpdateServerInput.apply)
+    implicit val formatCreateServerInput = jsonFormat5(CreateServerInput.apply)
+    implicit val formatUpdateServerInput = jsonFormat4(UpdateServerInput.apply)
   }
   import ServerJsonProtocol._
 

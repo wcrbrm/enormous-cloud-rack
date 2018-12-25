@@ -15,6 +15,7 @@
         <Logger name="com.zaxxer.hikari.pool" level="WARN" />
         <Logger name="de.flapdoodle" level="WARN" />
         <Logger name="ru.yandex.qatools.embed.postgresql" level="WARN" />
+        <Logger name="cloud.enormous.rack.models.db.PostgresProfile" level="WARN" />
 
         <Root level="INFO">
             <AppenderRef ref="STDOUT"/>
